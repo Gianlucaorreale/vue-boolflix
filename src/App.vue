@@ -1,14 +1,13 @@
 <template>
 <div>
-  <SearchBar placeholder="cerca film.." @search="fetchMovies"/>
+  <SearchBar placeholder="cerca film.." @search="startSearch"/>
   <section id="movies">
     <h2>Movies</h2>
-    <ul v-for="movie in movies" :key="movie.id">
-       <li>{{movie.title}}</li>
-       <li>{{movie.original_title}}</li>
-       <li>{{movie.original_language}}</li>
-       <li>{{movie.vote_average}}</li>
-    </ul>
+    <ProductionCard v-for="movie in movies" :key="movie.id" :production="movie"/>
+  </section>
+  <section id="series">
+    <h2>Serie</h2>
+    <ProductionCard v-for="serie in series" :key="serie.id" :production="serie"/>
   </section>
 </div>
 </template>
@@ -16,12 +15,14 @@
 <script>
 import axios from 'axios';
 import SearchBar from './components/SearchBar.vue';
+import ProductionCard from './components/ProductionCard.vue';
 export default {
   name: 'App',
-  components:{ SearchBar },
+  components:{ SearchBar, ProductionCard },
   data(){
     return{
       movies:[],
+      series:[],
       api:{
         language: 'it-IT',
         key:'e3e416df7064ff3d8ef2cebfaadfaf00',
@@ -30,8 +31,13 @@ export default {
     }
   },
   methods:{
-    fetchMovies(query){
-      const {language, key, baseUri} = this.api;
+    startSearch(query){
+      if(!query){
+        this.movies= [];
+        this.series = [];
+        return;
+      }
+      const {language, key} = this.api;
 
       const config = {
         params: {
@@ -39,14 +45,19 @@ export default {
           language,
           query,
         }
-      } 
+      }
+      
+      this.fetchData('/search/movie',config, 'movies');
+      this.fetchData('/search/tv',config, 'series');
+    },
 
-      axios.get(`${baseUri}/search/movie`,config).then((res)=>{
-         this.movies = res.data.results
-      })
-    }
-  }
-}
+    fetchData(endpoint,config, target){
+       axios.get(`${this.api.baseUri}${endpoint}`,config).then((res)=>{
+          this[target] = res.data.results
+       });
+    },
+  },
+};
 </script>
 
 
