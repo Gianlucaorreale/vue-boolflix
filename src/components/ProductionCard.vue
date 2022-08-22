@@ -6,17 +6,23 @@
         <img v-if="hasFlag" :src="flagSrc" :alt="production.original_language"/>
        <span v-else>{{production.original_language}}</span> 
         </li>
-       <li>{{production.vote_average}}</li>
+       <li><img :src="cover" :alt="title"></li>
+       
     </ul>
 </template>
 
 <script>
+const posterUrlRoot = 'https://image.tmdb.org/t/p/w342';
 export default{
   name:'ProductionCard',
+  
   props:{
     production: Object,
   },
   computed:{
+    cover(){
+      return  posterUrlRoot + this.production.poster_path;
+    },
     hasFlag(){
       const flag =['it','en'];
       return flag.includes(this.production.original_language);

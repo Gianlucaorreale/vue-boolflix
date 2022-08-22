@@ -1,24 +1,19 @@
 <template>
 <div>
   <SearchBar placeholder="cerca film.." @search="startSearch"/>
-  <section id="movies">
-    <h2>Movies</h2>
-    <ProductionCard v-for="movie in movies" :key="movie.id" :production="movie"/>
-  </section>
-  <section id="series">
-    <h2>Serie</h2>
-    <ProductionCard v-for="serie in series" :key="serie.id" :production="serie"/>
-  </section>
+  <ResultsSection id="movies" title="movies" :items="movies"/>
+
+  <ResultsSection id="series" title="series" :items="series"/>
 </div>
 </template>
 
 <script>
 import axios from 'axios';
 import SearchBar from './components/SearchBar.vue';
-import ProductionCard from './components/ProductionCard.vue';
+import ResultsSection from './components/ResultsSection.vue';
 export default {
   name: 'App',
-  components:{ SearchBar, ProductionCard },
+  components:{ SearchBar, ResultsSection,},
   data(){
     return{
       movies:[],
